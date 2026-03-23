@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урпэт - Журнал студента</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3a5fcd;
+            --secondary: #2c4cad;
+            --accent: #5d9cec;
+            --dark: #1e2a4a;
+            --light: #f8f9fa;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #f5f8ff;
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        /* Учебная лента */
+        .news-ticker {
+            background: var(--secondary);
+            color: white;
+            padding: 0.5rem 0;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .ticker-container {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            animation: ticker 30s linear infinite;
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 3rem;
+            font-size: 0.9rem;
+        }
+
+        .ticker-item i {
+            margin-right: 0.5rem;
+            color: var(--accent);
+        }
+
+        .ticker-label {
+            background: var(--primary);
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-right: 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logo img {
+            height: 50px;
+        }
+
+        .logo h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .group-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(247, 37, 133, 0.3);
+        }
+
+        .container {
+            display: flex;
+            min-height: calc(100vh - 80px - 38px); /* Учитываем высоту ленты */
+        }
+
+        .days-sidebar {
+            width: 250px;
+            background: white;
+            padding: 2rem 1.5rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .day-btn {
+            background: white;
+            color: var(--dark);
+            border: 1px solid #e6ecf7;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            text-align: left;
+            transition: all 0.3s ease;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .day-btn:hover, .day-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .day-btn.active {
+            box-shadow: 3px 3px 10px rgba(58, 95, 205, 0.2);
+        }
+
+        .schedule-container {
+            flex: 1;
+            padding: 3rem;
+            background: #f5f8ff;
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .schedule-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .date-display {
+            font-size: 1.1rem;
+            color: var(--dark);
+            opacity: 0.8;
+        }
+
+        .lessons-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .lesson-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--accent);
+            position: relative;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .lesson-time {
+            font-size: 1rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+
+        .lesson-name {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+        }
+
+        .lesson-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 1rem;
+            color: var(--dark);
+        }
+
+        .info-item i {
+            color: var(--accent);
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--success);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1000;
+            animation: slideIn 0.3s ease forwards;
+            transform: translateX(150%);
+        }
+
+        .notification.fade-out {
+            animation: fadeOut 0.3s ease forwards;
+        }
+
+        @keyframes slideIn {
+            to { transform: translateX(0); }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateX(150%); }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .days-sidebar {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 1.5rem;
+            }
+            
+            .day-btn {
+                min-width: 160px;
+                margin: 0 0.5rem 0 0;
+            }
+            
+            .schedule-container {
+                padding: 2rem;
+            }
+
+            .ticker-container {
+                animation: ticker-mobile 20s linear infinite;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+            
+            .logo {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .schedule-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+
+            .ticker-item {
+                font-size: 0.8rem;
+                margin-right: 2rem;
+            }
+
+            .ticker-label {
+                padding: 0.1rem 0.6rem;
+                margin-right: 0.5rem;
+            }
+
+            @keyframes ticker-mobile {
+                0% { transform: translateX(100%); }
+                100% { transform: translateX(-200%); }
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="news-ticker">
+        <div class="ticker-container" id="tickerContainer">
+            <div class="ticker-item">
+                <span class="ticker-label">ВАЖНО</span>
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Завтра собрание в 10:00 в актовом зале</span>
+            </div>
+            <div class="ticker-item">
+                <span class="ticker-label">НОВОСТЬ</span>
+                <i class="fas fa-newspaper"></i>
+                <span>Опубликованы новые методические материалы</span>
+            </div>
+            <div class="ticker-item">
+                <span class="ticker-label">НАПОМИНАНИЕ</span>
+                <i class="fas fa-bell"></i>
+                <span>Срок сдачи проекта по БД - до 15 декабря</span>
+            </div>
+            <div class="ticker-item">
+                <span class="ticker-label">ОБЪЯВЛЕНИЕ</span>
+                <i class="fas fa-bullhorn"></i>
+                <span>Конкурс студенческих работ стартует 1 ноября</span>
+            </div>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="logo">
+            <img src="logo.png" alt="Логотип Урпэт">
+            <h1>Журнал студента</h1>
+        </div>
+        <div class="user-info">
+            <div class="group-info" id="groupInfo">
+                <i class="fas fa-users"></i>
+                <span id="groupName">Группа: Загрузка...</span>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Выйти
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <aside class="days-sidebar">
+            <button class="day-btn active" data-day="monday">
+                <i class="fas fa-calendar-day"></i> Понедельник
+            </button>
+            <button class="day-btn" data-day="tuesday">
+                <i class="fas fa-calendar-day"></i> Вторник
+            </button>
+            <button class="day-btn" data-day="wednesday">
+                <i class="fas fa-calendar-day"></i> Среда
+            </button>
+            <button class="day-btn" data-day="thursday">
+                <i class="fas fa-calendar-day"></i> Четверг
+            </button>
+            <button class="day-btn" data-day="friday">
+                <i class="fas fa-calendar-day"></i> Пятница
+            </button>
+            <button class="day-btn" data-day="saturday">
+                <i class="fas fa-calendar-day"></i> Суббота
+            </button>
+        </aside>
+
+        <main class="schedule-container">
+            <div class="schedule-header">
+                <h2 class="schedule-title">Расписание занятий</h2>
+                <div class="date-display" id="currentDate"></div>
+            </div>
+
+            <div class="lessons-list" id="lessonsContainer">
+                <div class="lesson-card">
+                    <div class="lesson-time">
+                        <i class="fas fa-spinner fa-spin"></i> Загрузка расписания...
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Подключаем SignalR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    <script>
+        let currentDay = 'monday';
+        const jwtToken = localStorage.getItem('jwtToken');
+        const apiBaseUrl = 'https://localhost:7190';
+        
+        if (!jwtToken) {
+            window.location.href = 'index.html';
+        }
+
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').textContent = now.toLocaleDateString('ru-RU', options);
+
+        // Загрузка новостной ленты
+        async function loadTickerNews() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/news/ticker`, {
+                    headers: { 
+                        'Authorization': `Bearer ${jwtToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const news = await response.json();
+                    updateTicker(news);
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки новостей:', error);
+                // Оставляем стандартные сообщения, если не удалось загрузить
+            }
+        }
+
+        function updateTicker(newsItems) {
+            const container = document.getElementById('tickerContainer');
+            container.innerHTML = '';
+            
+            newsItems.forEach(item => {
+                const tickerItem = document.createElement('div');
+                tickerItem.className = 'ticker-item';
+                
+                const label = document.createElement('span');
+                label.className = 'ticker-label';
+                label.textContent = item.type.toUpperCase();
+                
+                const icon = document.createElement('i');
+                icon.className = getIconByType(item.type);
+                
+                const text = document.createElement('span');
+                text.textContent = item.text;
+                
+                tickerItem.appendChild(label);
+                tickerItem.appendChild(icon);
+                tickerItem.appendChild(text);
+                
+                container.appendChild(tickerItem);
+            });
+        }
+
+        function getIconByType(type) {
+            const icons = {
+                'важно': 'fas fa-exclamation-circle',
+                'новость': 'fas fa-newspaper',
+                'напоминание': 'fas fa-bell',
+                'объявление': 'fas fa-bullhorn',
+                'мероприятие': 'fas fa-calendar-alt',
+                'дедлайн': 'fas fa-clock'
+            };
+            return icons[type.toLowerCase()] || 'fas fa-info-circle';
+        }
+
+        // Инициализация SignalR соединения
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(`${apiBaseUrl}/scheduleHub`, {
+                skipNegotiation: true,
+                transport: signalR.HttpTransportType.WebSockets,
+                accessTokenFactory: () => jwtToken
+            })
+            .configureLogging(signalR.LogLevel.Warning)
+            .build();
+
+        // Обработчики SignalR
+        connection.on("ReceiveScheduleUpdate", (dayOfWeek) => {
+            if (dayOfWeek === currentDay) {
+                showNotification(`Расписание обновлено!`);
+                loadSchedule(currentDay);
+            }
+        });
+
+        connection.on("ReceiveNewsUpdate", () => {
+            showNotification(`Новые объявления!`);
+            loadTickerNews();
+        });
+
+        connection.onclose(async () => {
+            console.log("Connection lost. Trying to reconnect...");
+            await startConnection();
+        });
+
+        // Функция запуска соединения
+        async function startConnection() {
+            try {
+                await connection.start();
+                console.log("SignalR connected.");
+                
+                // Присоединяемся к группе после загрузки данных группы
+                const groupId = localStorage.getItem('groupId');
+                if (groupId) {
+                    await connection.invoke("JoinGroup", `group-${groupId}`);
+                }
+            } catch (err) {
+                console.log("SignalR connection error:", err);
+                setTimeout(startConnection, 5000);
+            }
+        }
+
+        // Функция показа уведомления
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <i class="fas fa-check-circle"></i> ${message}
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        async function loadGroupInfo() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/student/group`, {
+                    headers: { 
+                        'Authorization': `Bearer ${jwtToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const group = await response.json();
+                    document.getElementById('groupName').textContent = `Группа: ${group.name}`;
+                    localStorage.setItem('groupId', group.id.toString());
+                    
+                    // Присоединяемся к группе SignalR
+                    if (connection.state === signalR.HubConnectionState.Connected) {
+                        await connection.invoke("JoinGroup", `group-${group.id}`);
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки данных группы:', error);
+            }
+        }
+
+        async function loadSchedule(day) {
+            const container = document.getElementById('lessonsContainer');
+            
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/student/schedule/${day}`, {
+                    headers: { 
+                        'Authorization': `Bearer ${jwtToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const lessons = await response.json();
+                    renderLessons(lessons);
+                } else {
+                    throw new Error('Ошибка загрузки расписания');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                container.innerHTML = `
+                    <div class="lesson-card">
+                        <div class="lesson-name" style="color: var(--danger);">
+                            <i class="fas fa-exclamation-triangle"></i> Ошибка загрузки
+                        </div>
+                        <div class="lesson-info">
+                            <div class="info-item">
+                                Не удалось загрузить расписание
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderLessons(lessons) {
+            const container = document.getElementById('lessonsContainer');
+            
+            if (!lessons || lessons.length === 0) {
+                container.innerHTML = `
+                    <div class="lesson-card">
+                        <div class="lesson-name">
+                            <i class="fas fa-calendar-times"></i> Занятий нет
+                        </div>
+                        <div class="lesson-info">
+                            На этот день занятия не запланированы
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            lessons.forEach((lesson, index) => {
+                const lessonCard = document.createElement('div');
+                lessonCard.className = 'lesson-card';
+                lessonCard.innerHTML = `
+                    <div class="lesson-time">${lesson.orderNumber} пара (${getLessonTime(lesson.orderNumber)})</div>
+                    <h3 class="lesson-name">${lesson.subject}</h3>
+                    <div class="lesson-info">
+                        <div class="info-item">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>${lesson.teacher}</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-door-open"></i>
+                            <span>Кабинет: ${lesson.room}</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-layer-group"></i>
+                            <span>${lesson.floor} этаж</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(lessonCard);
+            });
+        }
+
+        function getLessonTime(lessonNumber) {
+            const times = {
+                1: '9:00 - 10:30',
+                2: '10:40 - 12:15',
+                3: '13:00 - 14:30',
+                4: '14:40 - 16:10',
+                5: '16:20 - 17:50',
+                6: '18:00 - 19:30'
+            };
+            return times[lessonNumber] || '';
+        }
+
+        // Инициализация приложения
+        async function initApp() {
+            try {
+                // Запускаем соединение SignalR
+                await startConnection();
+                
+                // Загружаем данные
+                await loadGroupInfo();
+                await loadSchedule(currentDay);
+                await loadTickerNews();
+                
+                document.querySelectorAll('.day-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        currentDay = this.dataset.day;
+                        loadSchedule(currentDay);
+                    });
+                });
+                
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    if (confirm('Вы уверены, что хотите выйти?')) {
+                        localStorage.removeItem('jwtToken');
+                        localStorage.removeItem('groupId');
+                        connection.stop();
+                        window.location.href = 'index.html';
+                    }
+                });
+                
+            } catch (err) {
+                console.error('Ошибка инициализации:', err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
