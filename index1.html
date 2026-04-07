@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет студента</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: #1a1e2b;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #0f172a;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .login-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .error-message {
+            color: #dc2626;
+            margin-top: 12px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .app {
+            display: flex;
+            max-width: 1400px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow: hidden;
+            display: none;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #f9fafc;
+            padding: 32px 16px;
+            border-right: 1px solid #edf0f5;
+        }
+
+        .sidebar-header {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+            padding-left: 12px;
+            margin-bottom: 32px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #e6edff;
+            color: #2563eb;
+        }
+
+        .content {
+            flex: 1;
+            padding: 32px 40px;
+            background: white;
+            min-height: 80vh;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: #64748b;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #e9ecf2;
+            padding-bottom: 16px;
+        }
+
+        .grid-2, .grid-3 {
+            display: grid;
+            gap: 24px;
+        }
+
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid #eef2f6;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1e293b;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-main {
+            font-weight: 500;
+        }
+
+        .item-meta {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .badge {
+            background: #e6edff;
+            color: #2563eb;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 8px;
+            background: #2563eb;
+            border-radius: 20px;
+            width: 0%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow-x: auto;
+            display: block;
+        }
+
+        th {
+            text-align: left;
+            padding: 14px 8px;
+            color: #64748b;
+            font-weight: 500;
+            font-size: 14px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td {
+            padding: 14px 8px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border-radius: 30px;
+            background: #f1f5f9;
+            color: #475569;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            flex: 1 1 180px;
+            border: 1px solid #eef2f6;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .windows-watermark {
+            text-align: center;
+            padding: 12px;
+            font-size: 12px;
+            color: #94a3b8;
+            background: #f1f5f9;
+            border-radius: 30px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .app { flex-direction: column; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #edf0f5; padding: 16px; }
+            .content { padding: 24px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active-page {
+            display: block;
+        }
+
+        .sport-item {
+            margin-bottom: 24px;
+        }
+
+        .sport-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .sport-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .sport-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .sport-detail {
+            color: #475569;
+            font-size: 14px;
+            margin: 4px 0;
+        }
+
+        .trainings {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .training-day {
+            background: #f1f5f9;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+        }
+
+        .competition-item {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .profile-photo-placeholder {
+            width: 100px;
+            height: 100px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .achievement-badge {
+            background: #f1f5f9;
+            border-radius: 30px;
+            padding: 6px 14px;
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .logout-btn {
+            margin-top: 20px;
+            background: none;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .status-badge {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        .status-online {
+            background: #10b981;
+            color: white;
+        }
+        .status-offline {
+            background: #ef4444;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="apiStatus" class="status-badge status-offline">Проверка API...</div>
+
+    <div id="loginPage" class="login-container">
+        <div class="login-title">Вход в личный кабинет</div>
+        <div class="form-group">
+            <label>Логин</label>
+            <input type="text" id="username" value="student" placeholder="student / teacher / admin">
+        </div>
+        <div class="form-group">
+            <label>Пароль</label>
+            <input type="password" id="password" value="student123" placeholder="••••••••">
+        </div>
+        <button class="login-btn" id="loginBtn">Войти</button>
+        <div class="error-message" id="loginError"></div>
+        <div style="margin-top: 20px; font-size: 12px; color: #64748b; text-align: center;">
+            <strong>Тестовые аккаунты:</strong><br>
+            student / student123<br>
+            teacher / teacher123<br>
+            admin / admin123
+        </div>
+    </div>
+
+    <div id="app" class="app">
+        <aside class="sidebar">
+            <div class="sidebar-header">Личный кабинет<br>Студента</div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a class="nav-link active" data-page="home">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" data-page="schedule">Расписание</a></li>
+                <li class="nav-item"><a class="nav-link" data-page="grades">Оценки</a></li>
+                <li class="nav-item"><a class="nav-link" data-page="courses">Курсы</a></li>
+                <li class="nav-item"><a class="nav-link" data-page="sports">Спорт</a></li>
+                <li class="nav-item"><a class="nav-link" data-page="profile">Профиль</a></li>
+            </ul>
+            <button class="logout-btn" id="logoutBtn">Выйти</button>
+        </aside>
+
+        <main class="content">
+            <div id="home" class="page active-page">
+                <h1 class="page-title" id="welcomeMessage">Добро пожаловать!</h1>
+                <div class="page-subtitle" id="currentDate"></div>
+                <div class="grid-2" style="margin-bottom: 24px;">
+                    <div class="card">
+                        <div class="card-title">Ближайшие занятия</div>
+                        <div id="upcomingLessonsList">Загрузка...</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Последние оценки</div>
+                        <div id="recentGradesList">Загрузка...</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Прогресс по курсам</div>
+                    <div id="courseProgressList">Загрузка...</div>
+                </div>
+            </div>
+
+            <div id="schedule" class="page">
+                <h1 class="page-title">Расписание занятий</h1>
+                <div class="page-subtitle">Расписание на весенний семестр 2026</div>
+                <div id="scheduleTable">Загрузка...</div>
+            </div>
+
+            <div id="grades" class="page">
+                <h1 class="page-title">Успеваемость</h1>
+                <div class="page-subtitle">Оценки и посещаемость</div>
+                <div class="stats-row">
+                    <div class="stat-item"><div class="stat-value" id="avgGrade">—</div><div class="stat-label">Средний балл</div></div>
+                    <div class="stat-item"><div class="stat-value" id="totalCourses">—</div><div class="stat-label">Всего курсов</div></div>
+                    <div class="stat-item"><div class="stat-value" id="avgAttendance">—</div><div class="stat-label">Посещаемость</div></div>
+                </div>
+                <div class="tabs" id="semesterTabs">
+                    <div class="tab active" data-semester="2">Текущий семестр</div>
+                    <div class="tab" data-semester="1">Прошлый семестр</div>
+                </div>
+                <div id="gradesTableContainer">Загрузка...</div>
+            </div>
+
+            <div id="courses" class="page">
+                <h1 class="page-title">Мои курсы</h1>
+                <div class="page-subtitle">Активные курсы в текущем семестре</div>
+                <div class="grid-3" id="coursesContainer">Загрузка...</div>
+            </div>
+
+            <div id="sports" class="page">
+                <h1 class="page-title">Спортивные достижения</h1>
+                <div class="page-subtitle">Виды спорта, награды и предстоящие соревнования</div>
+                <div id="sportsContent">Загрузка...</div>
+            </div>
+
+            <div id="profile" class="page">
+                <h1 class="page-title">Профиль</h1>
+                <div class="page-subtitle">Личная информация и настройки</div>
+                <div id="profileContent">Загрузка...</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://localhost:7226/api';
+        let authToken = localStorage.getItem('token');
+        let userRole = localStorage.getItem('role');
+        let userName = localStorage.getItem('userName');
+
+        async function checkApiConnection() {
+            const statusDiv = document.getElementById('apiStatus');
+            try {
+                const response = await fetch(`${API_BASE_URL}/Account/login`, {
+                    method: 'OPTIONS'
+                });
+                statusDiv.textContent = '✅ API доступен';
+                statusDiv.className = 'status-badge status-online';
+                return true;
+            } catch (e) {
+                statusDiv.textContent = '❌ API не доступен';
+                statusDiv.className = 'status-badge status-offline';
+                return false;
+            }
+        }
+
+        async function apiFetch(url, options = {}) {
+            const response = await fetch(`${API_BASE_URL}${url}`, {
+                ...options,
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+            if (!response.ok) {
+                if (response.status === 401) throw new Error('401 Unauthorized');
+                throw new Error(`Ошибка ${response.status}`);
+            }
+            return response.json();
+        }
+
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginError = document.getElementById('loginError');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/Account/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Ошибка входа');
+                }
+
+                const data = await response.json();
+                authToken = data.token;
+                userRole = data.role;
+                userName = data.username;
+
+                localStorage.setItem('token', authToken);
+                localStorage.setItem('role', userRole);
+                localStorage.setItem('userName', userName);
+
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                
+                document.getElementById('welcomeMessage').innerHTML = `Добро пожаловать, ${userName}!`;
+                document.getElementById('currentDate').innerHTML = `Сегодня ${new Date().toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+                
+                await loadHome();
+            } catch (error) {
+                loginError.textContent = error.message;
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.clear();
+            authToken = null;
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'block';
+        });
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const pageId = link.dataset.page;
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+                document.getElementById(pageId).classList.add('active-page');
+                
+                if (pageId === 'home') await loadHome();
+                else if (pageId === 'schedule') await loadSchedule();
+                else if (pageId === 'grades') await loadGrades();
+                else if (pageId === 'courses') await loadCourses();
+                else if (pageId === 'sports') await loadSports();
+                else if (pageId === 'profile') await loadProfile();
+            });
+        });
+
+        async function loadHome() {
+            try {
+                const lessons = await apiFetch('/Student/upcoming-lessons');
+                document.getElementById('upcomingLessonsList').innerHTML = lessons.length ? 
+                    lessons.map(l => `<div class="list-item"><div><span class="item-main">${l.subject}</span><br><span class="item-meta">Ауд. ${l.room}</span></div><div class="badge">${l.orderNumber}-я пара</div></div>`).join('') :
+                    '<div class="list-item">Нет занятий</div>';
+            } catch(e) { console.error(e); }
+
+            try {
+                const grades = await apiFetch('/Student/recent-grades?count=4');
+                document.getElementById('recentGradesList').innerHTML = grades.length ?
+                    grades.map(g => `<div class="list-item"><div><span class="item-main">${g.subject}</span><br><span class="item-meta">${new Date(g.date).toLocaleDateString()}</span></div><div class="badge">${g.value}</div></div>`).join('') :
+                    '<div class="list-item">Нет оценок</div>';
+            } catch(e) { console.error(e); }
+
+            try {
+                const progress = await apiFetch('/Student/course-progress');
+                document.getElementById('courseProgressList').innerHTML = progress.map(p => `
+                    <div class="list-item"><span>${p.courseName}</span><span class="badge">${p.progress}%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:${p.progress}%"></div></div>
+                `).join('');
+            } catch(e) { console.error(e); }
+        }
+
+        async function loadSchedule() {
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const dayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+            let allLessons = {}, maxLessons = 0;
+            
+            for (let day of days) {
+                const lessons = await apiFetch(`/Student/schedule/${day}`);
+                allLessons[day] = lessons;
+                maxLessons = Math.max(maxLessons, lessons.length);
+            }
+            
+            let html = '<div style="overflow-x: auto;"><table><thead><tr>' + dayNames.map(d => `<th>${d}</th>`).join('') + '</tr></thead><tbody>';
+            for (let i = 0; i < maxLessons; i++) {
+                html += '<tr>';
+                for (let day of days) {
+                    const lesson = allLessons[day][i];
+                    html += lesson ? `<td><strong>${lesson.subject}</strong><br>${lesson.teacher}<br><span class="item-meta">⏰ ${lesson.orderNumber}-я пара</span><br><span class="item-meta">🏠 Ауд. ${lesson.room}</span></td>` : '<td style="color: #cbd5e1;">—</td>';
+                }
+                html += '</tr>';
+            }
+            html += '</tbody></table></div>';
+            document.getElementById('scheduleTable').innerHTML = html;
+        }
+
+        async function loadGrades() {
+            const loadData = async (semesterId) => {
+                const grades = await apiFetch(`/Student/grades?semesterId=${semesterId}`);
+                const container = document.getElementById('gradesTableContainer');
+                if (!grades.length) { container.innerHTML = '<p>Нет оценок</p>'; return; }
+                let html = '<table><thead><tr><th>Предмет</th><th>Дата</th><th>Оценка</th><th>Тип</th></tr></thead><tbody>';
+                grades.forEach(g => html += `<tr><td>${g.subject}</td><td>${new Date(g.date).toLocaleDateString()}</td><td><span class="badge">${g.value}</span></td><td>${g.gradeType}</td></tr>`);
+                html += '</tbody><table>';
+                container.innerHTML = html;
+            };
+            
+            document.querySelectorAll('#semesterTabs .tab').forEach(tab => {
+                tab.onclick = () => {
+                    document.querySelectorAll('#semesterTabs .tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    loadData(parseInt(tab.dataset.semester));
+                };
+            });
+            
+            await loadData(2);
+            
+            try {
+                const profile = await apiFetch('/Student/profile');
+                const attendance = await apiFetch('/Student/attendance-summary');
+                document.getElementById('avgGrade').textContent = profile?.avgGrade || '4.7';
+                document.getElementById('totalCourses').textContent = '6';
+                document.getElementById('avgAttendance').textContent = (attendance?.averageAttendance || 87).toString() + '%';
+            } catch(e) { console.error(e); }
+        }
+
+        async function loadCourses() {
+            const courses = await apiFetch('/Student/courses');
+            const container = document.getElementById('coursesContainer');
+            container.innerHTML = courses.map(c => `
+                <div class="card">
+                    <div class="card-title">${c.courseName}</div>
+                    <div style="color:#475569; margin-bottom:12px;">${c.teacher}</div>
+                    <div style="font-size:24px; font-weight:600; color:#2563eb;">${c.progress}%</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:${c.progress}%"></div></div>
+                    <div style="display:flex; justify-content:space-between; margin:16px 0;">
+                        <span>📚 ${c.lecturesCompleted || 0}</span>
+                        <span>⏱️ ${c.totalHours || 0}ч</span>
+                        <span>📝 ${c.assignmentsCompleted || 0}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadSports() {
+            try {
+                const sportProfile = await apiFetch('/Student/sports');
+                const sportTypes = await apiFetch('/Student/sport-types');
+                const competitions = await apiFetch('/Student/competitions?upcomingOnly=false');
+                
+                let html = `<div class="stats-row"><div class="stat-item"><div class="stat-value">${sportProfile?.totalMedals || 0}</div><div class="stat-label">Всего медалей</div></div>
+                    <div class="stat-item"><div class="stat-value">${sportProfile?.goldMedals || 0}</div><div class="stat-label">Золотых</div></div>
+                    <div class="stat-item"><div class="stat-value">${sportTypes.length}</div><div class="stat-label">Вида спорта</div></div></div>
+                    <h3 style="margin: 24px 0 16px;">Виды спорта</h3>`;
+                
+                sportTypes.forEach(st => html += `<div class="sport-item"><div class="sport-header"><span class="sport-name">${st.name}</span><span class="sport-badge">${st.isMain ? 'Основной' : 'Дополнительный'}</span></div>
+                    <div class="sport-detail">${st.rank}</div><div class="sport-detail">Тренер: ${st.coach}</div>
+                    <div class="trainings">${st.trainingSchedule.split(',').map(t => `<span class="training-day">${t.trim()}</span>`).join('')}</div></div>`);
+                
+                html += `<h3 style="margin: 32px 0 16px;">Соревнования</h3>`;
+                competitions.forEach(c => html += `<div class="competition-item"><strong>${c.name}</strong><br>${new Date(c.date).toLocaleDateString()} • ${c.location}<br><small>${c.result || (c.isUpcoming ? 'Предстоит' : '')}</small></div>`);
+                
+                document.getElementById('sportsContent').innerHTML = html;
+            } catch(e) { document.getElementById('sportsContent').innerHTML = '<p>Нет спортивной информации</p>'; }
+        }
+
+        async function loadProfile() {
+            try {
+                const profile = await apiFetch('/Student/profile');
+                const academic = await apiFetch('/Student/academic-info');
+                const achievements = await apiFetch('/Student/achievements');
+                
+                document.getElementById('profileContent').innerHTML = `
+                    <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 250px;">
+                            <div class="profile-photo-placeholder">📸 Фото</div>
+                            <div><strong>${profile.firstName} ${profile.lastName}</strong><br>Студент</div>
+                            <div style="margin-top: 16px;">
+                                <div>📧 ${profile.email}</div>
+                                <div>📞 ${profile.phone}</div>
+                                <div>📍 ${profile.city}</div>
+                                <div>📅 Поступил: ${new Date(profile.enrollmentDate).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                        <div style="flex: 2;">
+                            <h3>Академическая информация</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #f8fafc; padding: 20px; border-radius: 20px;">
+                                <div><strong>Факультет:</strong> ${academic?.faculty || '-'}</div>
+                                <div><strong>Группа:</strong> ${academic?.groupName || '-'}</div>
+                                <div><strong>Студенческий билет:</strong> № ${academic?.studentIdNumber || '-'}</div>
+                                <div><strong>Направление:</strong> ${academic?.specialization || '-'}</div>
+                                <div><strong>Курс:</strong> ${academic?.course || '-'}</div>
+                                <div><strong>Форма обучения:</strong> ${academic?.studyForm || '-'}</div>
+                            </div>
+                            <h3 style="margin-top: 30px;">Достижения</h3>
+                            <div>${achievements.map(a => `<span class="achievement-badge">${a.icon || '🏅'} ${a.title}</span>`).join('')}</div>
+                        </div>
+                    </div>`;
+            } catch(e) { document.getElementById('profileContent').innerHTML = '<p>Ошибка загрузки профиля</p>'; }
+        }
+
+        if (authToken) {
+            checkApiConnection();
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('app').style.display = 'flex';
+            document.getElementById('welcomeMessage').innerHTML = `Добро пожаловать, ${userName}!`;
+            loadHome();
+        }
+        
+        checkApiConnection();
+    </script>
+</body>
+</html>
